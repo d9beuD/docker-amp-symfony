@@ -1,3 +1,7 @@
+#
+# EDIT ME IN `/docker/apache/.htaccess` ONLY
+#
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
