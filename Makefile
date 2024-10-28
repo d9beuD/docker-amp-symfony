@@ -10,6 +10,9 @@ logs:
 stop:
 	docker compose stop
 
+down:
+	docker compose down
+
 restart: stop up
 
 exec:
@@ -21,24 +24,7 @@ init-symfony:
 init: build up init-symfony
 
 rm:
-	docker compose exec apache sh -c \
-	"rm -rf \
-	./assets \
-	./bin \
-	./config \
-	./migrations \
-	./public/index.php \
-	./src \
-	./templates \
-	./tests \
-	./translations \
-	./var \
-	./vendor \
-	./composer.json \
-	./composer.lock \
-	./symfony.lock \
-	./phpunit.xml.dist \
-	./.env \
-	./.env.test \
-	./.gitignore \
-	./importmap.php"
+	docker compose down -v
+
+prune:
+	docker system prune -f --volumes
