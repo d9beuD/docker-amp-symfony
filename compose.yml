@@ -1,0 +1,40 @@
+name: project-name
+
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    image: bitnami/mariadb:10.6.19
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=app
+      - MARIADB_DATABASE=app
+    volumes:
+      - ./docker/database:/bitnami/mariadb:rw
+    ports:
+      - 3306:3306
+###< doctrine/doctrine-bundle ###
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=database
+      - PMA_USER=app
+      - PMA_PASSWORD=
+    depends_on:
+      - database
+
+  apache:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/var/www/
+      - ./docker/apache/apache.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./docker/apache/php.ini:/usr/local/etc/php/conf.d/php.custom.ini
+    ports:
+      - 8000:80
+    depends_on:
+      - database
