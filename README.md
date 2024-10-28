@@ -23,6 +23,20 @@ something more meaningful.
 + name: name-of-your-project
 ```
 
+Then, you can run the following command if you have `make`.
+
+It will:
+- Build the containers
+- Start the containers
+- Create a new Symfony project in an empty directory
+- Move the Symfony project to the root directory
+- Remove the temporary project directory
+- Warm up the Symfony cache
+
+```bash
+make init
+```
+
 Then, you can run the following command to build the containers:
 
 ```bash
