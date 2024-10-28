@@ -14,6 +14,7 @@ RUN apt-get install -y \
     libonig-dev \
     libpng-dev \
     libzip-dev \
+    rsync \
     unzip \
     sudo \
     zip
