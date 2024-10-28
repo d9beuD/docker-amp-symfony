@@ -14,3 +14,27 @@ restart: stop up
 
 exec:
 	docker compose exec apache /bin/bash
+
+init-symfony:
+	docker compose exec apache sh -c "./init-symfony.sh"
+
+init: build up init-symfony
+
+rm:
+	rm -rf \
+	./assets \
+	./bin \
+	./config \
+    ./migrations \
+	./public/index\
+	.php \
+	./src \
+	./templates \
+	./tests \
+	./translations \
+	./var \
+	./vendor \
+	./composer.json \
+	./composer.lock \
+	./symfony.lock \
+	./phpunit.xml.dist \
