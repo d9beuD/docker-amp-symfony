@@ -37,7 +37,9 @@ It will:
 make init
 ```
 
-Then, you can run the following command to build the containers:
+### Or, step by step
+
+You can run the following command to build the containers:
 
 ```bash
 make build # or `docker-compose build` if you don't have `make`
