@@ -6,5 +6,8 @@ git config --global user.name "Your Name"
 symfony new my-project --version="7.1.*" --webapp
 
 # Move all files from my-project to root directory
-rsync -a --exclude='.git' my-project/ ./
+rsync -a my-project/ ./ \
+    --exclude='.git' \
+    --exclude='compose.yaml' \
+    --exclude='compose.override.yaml'
 rm -rf my-project
