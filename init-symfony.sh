@@ -15,4 +15,8 @@ rsync -a my-project/ ./ \
 echo "* Removing my-project directory"
 rm -rf my-project
 
+# Warm up cache
+echo "* Warming up cache"
+symfony console cache:clear
+
 echo "Done."
