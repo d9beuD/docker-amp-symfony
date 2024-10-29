@@ -20,7 +20,8 @@ init-symfony:
 
 init: build up init-symfony
 
-rm:
+# Command to remove Symfony project files only
+rm-symfony:
 	docker compose exec apache sh -c \
 	"rm -rf \
 	./assets \
@@ -42,3 +43,11 @@ rm:
 	./.env.test \
 	./.gitignore \
 	./importmap.php"
+
+# Command to remove Docker containers and volumes
+rm-containers:
+	docker compose down -v
+
+# Command to prune unused Docker data
+prune:
+	docker system prune -f --volumes
