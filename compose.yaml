@@ -3,7 +3,7 @@ name: project-name
 services:
   ###> doctrine/doctrine-bundle ###
   database:
-    image: bitnami/mariadb:10.6.19
+    image: bitnami/mariadb:10.6.21
     container_name: project-database
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-root_password}
