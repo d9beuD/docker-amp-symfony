@@ -4,7 +4,7 @@ git config --global user.name "Your Name"
 
 # Install Symfony project in new empty directory
 echo "* Installing Symfony project in new empty directory"
-symfony new my-project --version="7.2.*" --webapp
+symfony new my-project --version="7.3.*" --webapp
 
 # Move all files from my-project to root directory
 echo "* Moving files from my-project to root directory"
