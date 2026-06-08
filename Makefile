@@ -13,16 +13,16 @@ stop:
 restart: stop up
 
 exec:
-	docker compose exec apache /bin/bash
+	docker compose exec php-fpm /bin/bash
 
 init-symfony:
-	docker compose exec apache sh -c "./init-symfony.sh"
+	docker compose exec php-fpm sh -c "./init-symfony.sh"
 
 init: build up init-symfony
 
 # Command to remove Symfony project files only
 rm-symfony:
-	docker compose exec apache sh -c \
+	docker compose exec php-fpm sh -c \
 	"rm -rf \
 	./assets \
 	./bin \
