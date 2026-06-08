@@ -1,10 +1,8 @@
 name: project-name
 
 services:
-  ###> doctrine/doctrine-bundle ###
   database:
     image: mariadb:12.0.2-ubi10
-    container_name: project-database
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-root_password}
       - MARIADB_USER=${MARIADB_USER:-app}
@@ -12,16 +10,10 @@ services:
       - MARIADB_DATABASE=${MARIADB_DATABASE:-app}
     volumes:
       - database_data:/var/lib/mysql
-    networks:
-      - project_network
-    ports:
-      - 3306:3306
     restart: unless-stopped
-  ###< doctrine/doctrine-bundle ###
 
   phpmyadmin:
     image: phpmyadmin:5.2.1
-    container_name: project-phpmyadmin
     ports:
       - 8080:80
     environment:
@@ -31,32 +23,37 @@ services:
       - PMA_PASSWORD=${MARIADB_PASSWORD:-app_password}
     depends_on:
       - database
-    networks:
-      - project_network
     restart: unless-stopped
 
-  apache:
+  php-fpm:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: project-apache
     volumes:
       - .:/var/www/
-      - ./docker/apache/apache.conf:/etc/apache2/sites-enabled/000-default.conf
-      - ./docker/apache/php.ini:/usr/local/etc/php/conf.d/php.custom.ini
-      - ./docker/apache/.htaccess:/var/www/public/.htaccess
-    ports:
-      - 8000:80
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.custom.ini
     depends_on:
       - database
-    networks:
-      - project_network
     restart: unless-stopped
 
-networks:
-  project_network:
-    driver: bridge
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - $PWD/docker/caddy/conf:/etc/caddy
+      - $PWD:/var/www
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - php-fpm
 
 volumes:
   database_data:
-    driver: local
+  caddy_data:
+  caddy_config:
