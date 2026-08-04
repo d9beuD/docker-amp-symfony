@@ -1,8 +1,9 @@
 name: project-name
 
 services:
+  ###> doctrine/doctrine-bundle ###
   database:
-    image: mariadb:12.0.2-ubi10
+    image: mariadb:10.6.20
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-root_password}
       - MARIADB_USER=${MARIADB_USER:-app}
@@ -10,7 +11,12 @@ services:
       - MARIADB_DATABASE=${MARIADB_DATABASE:-app}
     volumes:
       - database_data:/var/lib/mysql
+    networks:
+      - genealogist_network
+    ports:
+      - 3306:3306
     restart: unless-stopped
+  ###< doctrine/doctrine-bundle ###
 
   phpmyadmin:
     image: phpmyadmin:5.2.1
@@ -23,35 +29,30 @@ services:
       - PMA_PASSWORD=${MARIADB_PASSWORD:-app_password}
     depends_on:
       - database
+    networks:
+      - genealogist_network
     restart: unless-stopped
 
-  php-fpm:
+  app:
     build:
       context: .
       dockerfile: ./Dockerfile
-    volumes:
-      - .:/var/www/
-      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.custom.ini
-    depends_on:
-      - database
-    restart: unless-stopped
-
-  caddy:
-    image: caddy:2
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
+      target: ${APP_BUILD_TARGET:-dev}
     ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
+      - 8000:3000
     volumes:
-      - $PWD/docker/caddy/conf:/etc/caddy
-      - $PWD:/var/www
+      - .:/app/
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - php-fpm
+      - database
+    networks:
+      - genealogist_network
+
+networks:
+  genealogist_network:
+    driver: bridge
 
 volumes:
   database_data:

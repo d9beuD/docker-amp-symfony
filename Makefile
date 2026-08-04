@@ -1,5 +1,8 @@
 build:
-	docker compose --progress=plain build
+	docker compose build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
+
+build-prod:
+	APP_BUILD_TARGET=prod docker compose build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
 
 up:
 	docker compose up -d
@@ -13,16 +16,16 @@ stop:
 restart: stop up
 
 exec:
-	docker compose exec php-fpm /bin/bash
+	docker compose exec app /bin/bash
 
 init-symfony:
-	docker compose exec php-fpm sh -c "./init-symfony.sh"
+	docker compose exec app sh -c "./init-symfony.sh"
 
 init: build up init-symfony
 
 # Command to remove Symfony project files only
 rm-symfony:
-	docker compose exec php-fpm sh -c \
+	docker compose exec app sh -c \
 	"rm -rf \
 	./assets \
 	./bin \
