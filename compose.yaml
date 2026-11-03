@@ -1,7 +1,6 @@
 name: project-name
 
 services:
-  ###> doctrine/doctrine-bundle ###
   database:
     image: mariadb:10.6.20
     environment:
@@ -12,11 +11,10 @@ services:
     volumes:
       - database_data:/var/lib/mysql
     networks:
-      - genealogist_network
+      - project_network
     ports:
       - 3306:3306
     restart: unless-stopped
-  ###< doctrine/doctrine-bundle ###
 
   phpmyadmin:
     image: phpmyadmin:5.2.1
@@ -30,7 +28,7 @@ services:
     depends_on:
       - database
     networks:
-      - genealogist_network
+      - project_network
     restart: unless-stopped
 
   app:
@@ -48,10 +46,10 @@ services:
     depends_on:
       - database
     networks:
-      - genealogist_network
+      - project_network
 
 networks:
-  genealogist_network:
+  project_network:
     driver: bridge
 
 volumes:
