@@ -26,7 +26,6 @@ RUN \
 		groupadd --gid "${GID}" "${group_name}"; \
 	fi; \
 	useradd --uid "${UID}" --gid "${GID}" --create-home --shell /usr/sbin/nologin "${USER}"; \
-	setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp; \
 	chown -R "${USER}:${group_name}" /config/caddy /data/caddy
 
 # Add PHP extensions here if needed
@@ -58,7 +57,6 @@ ENV HOME=/home/${USER} \
 # Symfony CLI only for dev
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash && \
     apt-get install -y symfony-cli && \
-    symfony server:ca:install && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 3000
