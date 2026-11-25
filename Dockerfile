@@ -48,7 +48,7 @@ RUN cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
 
 # Symfony CLI needs a writable config/cache home
 RUN mkdir -p /home/${USER}/.config/symfony-cli/cache /home/${USER}/.cache && \
-	chown -R ${USER}:${group_name} /home/${USER}
+	chown -R ${UID}:${GID} /home/${USER}
 
 ENV HOME=/home/${USER} \
 	XDG_CONFIG_HOME=/home/${USER}/.config \
@@ -82,11 +82,11 @@ RUN --mount=type=cache,target=/tmp/composer-cache \
 ENV APP_ENV=prod APP_DEBUG=0
 ENV APP_VERSION=${APP_VERSION}
 
-COPY . /app
+COPY --chown=${UID}:${GID} . /app
 
 RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log /app/var/sass /app/tmp && \
 	composer run-script post-install-cmd --no-interaction && \
-	chown -R "${USER}:${USER}" /app
+	chown -R "${UID}:${GID}" /app/var /app/tmp
 
 EXPOSE 3000
 

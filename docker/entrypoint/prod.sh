@@ -13,7 +13,7 @@ mkdir -p \
 	/app/tmp
 
 if [ "$(id -u)" = "0" ]; then
-	chown -R "${APP_RUN_USER}:${APP_RUN_USER}" \
+	chown -R "${APP_RUN_USER}:" \
 		/app/var \
 		/app/config/jwt \
 		/app/tmp
