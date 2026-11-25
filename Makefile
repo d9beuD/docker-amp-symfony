@@ -50,10 +50,10 @@ rm-symfony:
 	./.gitignore \
 	./importmap.php"
 
-# Command to remove Docker containers and volumes
+# Remove this project's containers
 rm-containers:
-	docker compose down -v
+	docker compose down
 
-# Command to prune unused Docker data
-prune:
-	docker system prune -f --volumes
+# Remove this project's containers AND volumes: deletes the database
+rm-all:
+	docker compose down -v
