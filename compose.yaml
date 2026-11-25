@@ -1,11 +1,12 @@
 services:
   database:
-    image: mariadb:10.6.20
+    image: mariadb:12.3
     environment:
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-root_password}
       - MARIADB_USER=${MARIADB_USER:-app}
       - MARIADB_PASSWORD=${MARIADB_PASSWORD:-app_password}
       - MARIADB_DATABASE=${MARIADB_DATABASE:-app}
+      - MARIADB_AUTO_UPGRADE=1
     volumes:
       - database_data:/var/lib/mysql
     ports:
