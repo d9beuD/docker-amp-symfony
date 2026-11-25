@@ -79,6 +79,8 @@ RUN --mount=type=cache,target=/tmp/composer-cache \
 
 ENV APP_ENV=prod APP_DEBUG=0
 ENV APP_VERSION=${APP_VERSION}
+# Worker mode, Symfony >= 7.4 runtime detects it natively
+ENV FRANKENPHP_CONFIG="worker /app/public/index.php"
 
 COPY --chown=${UID}:${GID} . /app
 
