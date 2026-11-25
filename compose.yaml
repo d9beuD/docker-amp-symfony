@@ -37,7 +37,7 @@ services:
       dockerfile: ./Dockerfile
       target: dev
     ports:
-      - 8000:3000
+      - 127.0.0.1:8000:3000
     volumes:
       - .:/app/
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
