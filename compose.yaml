@@ -36,6 +36,9 @@ services:
       context: .
       dockerfile: ./Dockerfile
       target: dev
+    environment:
+      # Overrides the PostgreSQL URL that Symfony's Doctrine recipe writes to .env
+      - DATABASE_URL=mysql://${MARIADB_USER:-app}:${MARIADB_PASSWORD:-app_password}@database:3306/${MARIADB_DATABASE:-app}?serverVersion=12.3.2-MariaDB&charset=utf8mb4
     ports:
       - 127.0.0.1:8000:3000
     volumes:
