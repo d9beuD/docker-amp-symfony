@@ -84,9 +84,9 @@ ENV APP_VERSION=${APP_VERSION}
 
 COPY --chown=${UID}:${GID} . /app
 
-RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log /app/var/sass /app/tmp && \
+RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log && \
 	composer run-script post-install-cmd --no-interaction && \
-	chown -R "${UID}:${GID}" /app/var /app/tmp
+	chown -R "${UID}:${GID}" /app/var
 
 EXPOSE 3000
 
