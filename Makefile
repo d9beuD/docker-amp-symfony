@@ -32,8 +32,13 @@ restart: stop up
 exec:
 	docker compose exec app /bin/bash
 
+# Override on the command line: make init TYPE=api VERSION="7.4.*"
+# Plain = so a stray TYPE/VERSION in the shell environment is ignored
+TYPE = webapp
+VERSION = stable
+
 init-symfony:
-	docker compose exec app sh -c "./init-symfony.sh"
+	docker compose exec -e TYPE='$(TYPE)' -e VERSION='$(VERSION)' app ./init-symfony.sh
 
 init: build up init-symfony
 

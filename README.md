@@ -34,6 +34,15 @@ It will:
 make init
 ```
 
+By default it installs the latest stable Symfony as a full web app
+(`--webapp`). Choose another project type or version with `TYPE` and `VERSION`:
+
+```bash
+make init TYPE=api                 # API project (--api, API Platform)
+make init VERSION=lts              # a version, or lts, stable, next, previous
+make init TYPE=api VERSION="7.4.*"
+```
+
 ### Or, step by step
 
 You can run the following command to build the containers:
@@ -61,7 +70,7 @@ make exec # or `docker compose exec app bash` if you don't have `make`
 Then, you can create a new Symfony project in the root directory by running the `init-symfony.sh` script:
 
 ```bash
-./init-symfony.sh
+./init-symfony.sh                        # or: TYPE=api VERSION=lts ./init-symfony.sh
 ```
 
 You can now access:

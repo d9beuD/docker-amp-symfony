@@ -3,7 +3,12 @@ set -eu
 
 # Install Symfony project in new empty directory
 echo "* Installing Symfony project in new empty directory"
-symfony new my-project --version="8.1.*" --webapp --no-git
+case "${TYPE:-webapp}" in
+  webapp) flag=--webapp ;;
+  api)    flag=--api ;;
+  *) echo "TYPE must be 'webapp' or 'api', got '${TYPE}'" >&2; exit 1 ;;
+esac
+symfony new my-project --version="${VERSION:-stable}" "$flag" --no-git
 
 # Move all files from my-project to root directory
 echo "* Moving files from my-project to root directory"
