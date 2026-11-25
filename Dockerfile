@@ -4,7 +4,7 @@ FROM dunglas/frankenphp:1-php8.4-trixie AS base
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends rsync unzip git gosu && \
+RUN apt-get update && apt-get install -y --no-install-recommends unzip git gosu && \
 	rm -rf /var/lib/apt/lists/*
 
 ARG USER=appuser
@@ -26,7 +26,6 @@ RUN \
 		groupadd --gid "${GID}" "${group_name}"; \
 	fi; \
 	useradd --uid "${UID}" --gid "${GID}" --create-home --shell /usr/sbin/nologin "${USER}"; \
-	setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp; \
 	chown -R "${USER}:${group_name}" /config/caddy /data/caddy
 
 # Add PHP extensions here if needed
@@ -36,7 +35,7 @@ RUN install-php-extensions \
     zip
 
 # Composer for PHP dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 COPY docker/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --chmod=755 docker/entrypoint/prod.sh /usr/local/bin/app-prod-entrypoint
@@ -48,17 +47,16 @@ RUN cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
 
 # Symfony CLI needs a writable config/cache home
 RUN mkdir -p /home/${USER}/.config/symfony-cli/cache /home/${USER}/.cache && \
-	chown -R ${USER}:${group_name} /home/${USER}
+	chown -R ${UID}:${GID} /home/${USER}
 
 ENV HOME=/home/${USER} \
 	XDG_CONFIG_HOME=/home/${USER}/.config \
 	XDG_CACHE_HOME=/home/${USER}/.cache \
 	XDG_DATA_HOME=/home/${USER}/.local/share
 
-# Symfony CLI only for dev
+# Symfony CLI, and rsync for init-symfony.sh, only for dev
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash && \
-    apt-get install -y symfony-cli && \
-    symfony server:ca:install && \
+    apt-get install -y symfony-cli rsync && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 3000
@@ -77,16 +75,18 @@ COPY composer.json composer.lock /app/
 
 RUN --mount=type=cache,target=/tmp/composer-cache \
     COMPOSER_CACHE_DIR=/tmp/composer-cache \
-    composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+    composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts
 
 ENV APP_ENV=prod APP_DEBUG=0
 ENV APP_VERSION=${APP_VERSION}
 
-COPY . /app
+COPY --chown=${UID}:${GID} . /app
 
-RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log /app/var/sass /app/tmp && \
+RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log && \
+	composer dump-autoload --no-dev --classmap-authoritative --no-interaction && \
 	composer run-script post-install-cmd --no-interaction && \
-	chown -R "${USER}:${USER}" /app
+	php /app/bin/console asset-map:compile && \
+	chown -R "${UID}:${GID}" /app/var
 
 EXPOSE 3000
 
