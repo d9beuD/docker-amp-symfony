@@ -75,7 +75,7 @@ COPY composer.json composer.lock /app/
 
 RUN --mount=type=cache,target=/tmp/composer-cache \
     COMPOSER_CACHE_DIR=/tmp/composer-cache \
-    composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+    composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts
 
 ENV APP_ENV=prod APP_DEBUG=0
 ENV APP_VERSION=${APP_VERSION}
