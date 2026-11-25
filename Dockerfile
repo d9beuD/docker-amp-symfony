@@ -4,7 +4,7 @@ FROM dunglas/frankenphp:1-php8.4-trixie AS base
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends rsync unzip git gosu && \
+RUN apt-get update && apt-get install -y --no-install-recommends unzip git gosu && \
 	rm -rf /var/lib/apt/lists/*
 
 ARG USER=appuser
@@ -54,9 +54,9 @@ ENV HOME=/home/${USER} \
 	XDG_CACHE_HOME=/home/${USER}/.cache \
 	XDG_DATA_HOME=/home/${USER}/.local/share
 
-# Symfony CLI only for dev
+# Symfony CLI, and rsync for init-symfony.sh, only for dev
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash && \
-    apt-get install -y symfony-cli && \
+    apt-get install -y symfony-cli rsync && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 3000
