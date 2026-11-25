@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
       target: dev
-    environment:
+    environment: &app-env
       # Overrides the PostgreSQL URL that Symfony's Doctrine recipe writes to .env
       - DATABASE_URL=mysql://${MARIADB_USER:-app}:${MARIADB_PASSWORD:-app_password}@database:3306/${MARIADB_DATABASE:-app}?serverVersion=12.3.2-MariaDB&charset=utf8mb4
     ports:
@@ -46,6 +46,20 @@ services:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+    depends_on:
+      database:
+        condition: service_healthy
+
+  # Prod image, only started by `make smoke-prod` (profile "prod")
+  app-prod:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: prod
+    environment: *app-env
+    ports:
+      - 127.0.0.1:8001:3000
     depends_on:
       database:
         condition: service_healthy

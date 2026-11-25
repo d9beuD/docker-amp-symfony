@@ -77,8 +77,18 @@ inside the container thanks to the `make exec` command.
 make build-prod
 ```
 
-It builds the `prod` target under its own `<folder>-app:prod` tag, so it never
+It builds the `prod` target as the separate `app-prod` service, so it never
 replaces the dev image used by `make up`.
+
+After `make init`, check that the prod image really starts:
+
+```bash
+make smoke-prod
+```
+
+It builds the prod image, starts it once against the dev database on
+`http://localhost:8001`, prints its last log lines, removes the container and
+fails if the app does not answer or answers with a 5xx error.
 
 ## Cleaning up
 
