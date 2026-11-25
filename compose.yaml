@@ -35,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-      target: ${APP_BUILD_TARGET:-dev}
+      target: dev
     ports:
       - 8000:3000
     volumes:

@@ -1,8 +1,11 @@
+# Own tag so the prod image never replaces the dev image compose runs
+PROD_IMAGE ?= $(shell basename "$(CURDIR)" | tr '[:upper:]' '[:lower:]')-app:prod
+
 build:
 	docker compose build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
 
 build-prod:
-	APP_BUILD_TARGET=prod docker compose build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
+	docker build --target prod -t $(PROD_IMAGE) --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) .
 
 up:
 	docker compose up -d
