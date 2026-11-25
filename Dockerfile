@@ -36,7 +36,7 @@ RUN install-php-extensions \
     zip
 
 # Composer for PHP dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 COPY docker/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --chmod=755 docker/entrypoint/prod.sh /usr/local/bin/app-prod-entrypoint
