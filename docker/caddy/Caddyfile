@@ -1,3 +1,10 @@
+{
+	frankenphp {
+		# Set in the prod image to enable worker mode, empty in dev
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
 http://:3000 {
 	root * /app/public
 	encode zstd br gzip

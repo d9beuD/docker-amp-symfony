@@ -89,6 +89,17 @@ make build-prod
 It builds the `prod` target as the separate `app-prod` service, so it never
 replaces the dev image used by `make up`.
 
+The prod image runs FrankenPHP in [worker mode](https://frankenphp.dev/docs/worker/):
+the Symfony kernel boots once and stays in memory between requests. Change it
+with the `FRANKENPHP_CONFIG` environment variable, for example in your
+hosting panel:
+
+- `worker /app/public/index.php 8` sets the number of workers.
+- An empty value goes back to classic mode.
+
+Services that keep state between requests must implement `ResetInterface`.
+Dev stays in classic mode, so code changes show up without a restart.
+
 After `make init`, check that the prod image really starts:
 
 ```bash
