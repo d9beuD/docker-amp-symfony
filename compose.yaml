@@ -58,6 +58,9 @@ services:
       dockerfile: ./Dockerfile
       target: prod
     environment: *app-env
+    # Same as a hardened host: smoke-prod fails if the image needs root or a capability
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
     ports:
       - 127.0.0.1:8001:3000
     depends_on:

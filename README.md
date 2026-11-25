@@ -110,6 +110,11 @@ It builds the prod image, starts it once against the dev database on
 `http://localhost:8001`, prints its last log lines, removes the container and
 fails if the app does not answer or answers with a 5xx error.
 
+The prod image runs as the non-root `appuser` (numeric `UID:GID`), with no
+Linux capability, so it works with `cap_drop: ALL` and Kubernetes
+`runAsNonRoot`. A volume mounted on `/app/var` must be writable by that UID:
+named volumes are, a bind mount owned by root is not.
+
 ## Cleaning up
 
 - `make rm-containers` removes this project's containers and keeps the database.

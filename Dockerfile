@@ -4,7 +4,7 @@ FROM dunglas/frankenphp:1-php8.4-trixie AS base
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends unzip git gosu && \
+RUN apt-get update && apt-get install -y --no-install-recommends unzip git && \
 	rm -rf /var/lib/apt/lists/*
 
 ARG USER=appuser
@@ -13,8 +13,6 @@ ARG GID=1000
 # x-release-please-start-version
 ARG APP_VERSION=3.0.0
 # x-release-please-end
-
-ENV APP_RUN_USER=${USER}
 
 # Common setup for dev and prod
 RUN \
@@ -26,7 +24,9 @@ RUN \
 		groupadd --gid "${GID}" "${group_name}"; \
 	fi; \
 	useradd --uid "${UID}" --gid "${GID}" --create-home --shell /usr/sbin/nologin "${USER}"; \
-	chown -R "${USER}:${group_name}" /config/caddy /data/caddy
+	chown -R "${USER}:${group_name}" /config/caddy /data/caddy; \
+	# :3000 is unprivileged, so drop the bind capability; lets the image run with cap_drop: ALL
+	setcap -r /usr/local/bin/frankenphp
 
 # Add PHP extensions here if needed
 RUN install-php-extensions \
@@ -89,6 +89,9 @@ RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log && \
 	composer run-script post-install-cmd --no-interaction && \
 	php /app/bin/console asset-map:compile && \
 	chown -R "${UID}:${GID}" /app/var
+
+# Numeric, so Kubernetes runAsNonRoot can check it
+USER ${UID}:${GID}
 
 EXPOSE 3000
 
