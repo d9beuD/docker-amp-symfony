@@ -86,6 +86,7 @@ COPY --chown=${UID}:${GID} . /app
 
 RUN mkdir -p /app/var/cache/prod/pools/system /app/var/log && \
 	composer run-script post-install-cmd --no-interaction && \
+	php /app/bin/console asset-map:compile && \
 	chown -R "${UID}:${GID}" /app/var
 
 EXPOSE 3000
