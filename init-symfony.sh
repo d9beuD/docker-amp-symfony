@@ -19,6 +19,10 @@ rsync -a my-project/ ./ \
 # Symfony's .gitignore replaced ours; keep its macOS entry
 grep -qxF '.DS_Store' .gitignore || echo '.DS_Store' >> .gitignore
 
+# Entrypoint of the prod image, which has no shell
+mkdir -p src/Command
+cp docker/symfony/EntrypointCommand.php src/Command/
+
 echo "* Removing my-project directory"
 rm -rf my-project
 
