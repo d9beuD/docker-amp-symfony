@@ -1,27 +1,24 @@
 # Docker AMP Symfony
 
-The purpose of this template project is to provide a quick and easy way to get 
-a Symfony project up and running with Docker. Ths project uses Apache, MySQL and
-PHP.
+The purpose of this template project is to provide a quick and easy way to get
+a Symfony project up and running with Docker. This project uses
+[FrankenPHP](https://frankenphp.dev) (PHP served by Caddy), MariaDB and
+phpMyAdmin.
 
 ## Requirements
 
 - [Docker](https://www.docker.com/)
-- [Docker Composer](https://docs.docker.com/compose/)
+- [Docker Compose](https://docs.docker.com/compose/)
 - [Make](https://www.gnu.org/software/make/manual/make.html) (optional — [install `make` for Windows](https://stackoverflow.com/questions/2532234/how-to-run-a-makefile-in-windows))
 
 ## Usage
 
-The first thing to do is to change a little bit the `compose.yml` file. You can
-change the `MYSQL_ROOT_PASSWORD` and `MYSQL_DATABASE` environment variables to
-whatever you want. You really should change the `name` of the container to
-something more meaningful.
+The database credentials come from the `MARIADB_ROOT_PASSWORD`, `MARIADB_USER`,
+`MARIADB_PASSWORD` and `MARIADB_DATABASE` environment variables. Export them in
+your shell, or change their defaults in `compose.yaml`.
 
-```diff
-# compose.yml
-- name: project-name
-+ name: name-of-your-project
-```
+Docker Compose names the containers after the project folder, so rename the
+folder to something meaningful before you start.
 
 Then, you can run the following command if you have `make`.
 
@@ -31,7 +28,7 @@ It will:
 - Create a new Symfony project in an empty directory
 - Move the Symfony project to the root directory
 - Remove the temporary project directory
-- Warm up the Symfony cache
+- Clear the Symfony cache
 
 ```bash
 make init
@@ -42,22 +39,22 @@ make init
 You can run the following command to build the containers:
 
 ```bash
-make build # or `docker-compose build` if you don't have `make`
+make build # or `docker compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)` if you don't have `make`
 ```
 
-An image with [PHP](https://www.php.net), [Apache](https://httpd.apache.org), [Composer](https://getcomposer.org) and [Symfony CLI](https://symfony.com/download) ready to use will be built.
+An image with [PHP](https://www.php.net), [FrankenPHP](https://frankenphp.dev), [Composer](https://getcomposer.org) and [Symfony CLI](https://symfony.com/download) ready to use will be built.
 
 After that, you can run the following command to start the containers:
 
 ```bash
-make up # or `docker-compose up -d` if you don't have `make`
+make up # or `docker compose up -d` if you don't have `make`
 ```
 
-Apache should be ready to serve, but you don't have a Symfony project yet. You
-can create one by entering the Apache container and running the following command:
+FrankenPHP should be ready to serve, but you don't have a Symfony project yet.
+You can create one by entering the `app` container:
 
 ```bash
-make exec # or `docker-compose exec apache bash` if you don't have `make`
+make exec # or `docker compose exec app bash` if you don't have `make`
           # it will open a bash session inside the container
 ```
 
@@ -67,7 +64,23 @@ Then, you can create a new Symfony project in the root directory by running the 
 ./init-symfony.sh
 ```
 
-You can now access your Symfony project at `http://localhost:8080`.
+You can now access:
+- your Symfony project at `http://localhost:8000`
+- phpMyAdmin at `http://localhost:8080`
 
 Remember that every time you want to run a Symfony command, you should run it
 inside the container thanks to the `make exec` command.
+
+## Production image
+
+```bash
+make build-prod
+```
+
+It builds the `prod` target under its own `<folder>-app:prod` tag, so it never
+replaces the dev image used by `make up`.
+
+## Cleaning up
+
+- `make rm-containers` removes this project's containers and keeps the database.
+- `make rm-all` also removes the volumes, **including the database**.
