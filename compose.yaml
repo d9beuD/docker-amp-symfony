@@ -9,8 +9,6 @@ services:
       - MARIADB_AUTO_UPGRADE=1
     volumes:
       - database_data:/var/lib/mysql
-    ports:
-      - 127.0.0.1:3306:3306
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
@@ -21,7 +19,7 @@ services:
   phpmyadmin:
     image: phpmyadmin:5
     ports:
-      - 127.0.0.1:8080:80
+      - 8080:80
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=database
@@ -40,7 +38,7 @@ services:
       # Overrides the PostgreSQL URL that Symfony's Doctrine recipe writes to .env
       - DATABASE_URL=mysql://${MARIADB_USER:-app}:${MARIADB_PASSWORD:-app_password}@database:3306/${MARIADB_DATABASE:-app}?serverVersion=12.3.2-MariaDB&charset=utf8mb4
     ports:
-      - 127.0.0.1:8000:3000
+      - 8000:3000
     volumes:
       - .:/app/
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -62,7 +60,7 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     ports:
-      - 127.0.0.1:8001:3000
+      - 8001:3000
     depends_on:
       database:
         condition: service_healthy
