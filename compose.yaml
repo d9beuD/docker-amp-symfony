@@ -9,8 +9,6 @@ services:
       - MARIADB_AUTO_UPGRADE=1
     volumes:
       - database_data:/var/lib/mysql
-    ports:
-      - 3306:3306
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
